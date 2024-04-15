@@ -1,13 +1,17 @@
 package ai.acintyo.ezykle.services;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import ai.acintyo.ezykle.bindings.UserRegistrationForm;
 import ai.acintyo.ezykle.entities.EzUserAccount;
 import ai.acintyo.ezykle.entities.EzUserRegistration;
+import ai.acintyo.ezykle.model.DataNotFoundException;
 import ai.acintyo.ezykle.repositories.UserRegistrationRepo;
 import ai.acintyo.ezykle.util.EncodingData;
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +65,32 @@ public class UserRegistrationImpl implements UserRegistrationService {
 			throw new RuntimeException("{user.registration.saveError}", e);
 		}
 
+	}
+
+	@Override
+	public Page<EzUserRegistration> fetchAllUsers(Pageable pageable) {
+		// TODO Auto-generated method stub
+		log.info("ai.acintyo.ezykle.services.UserRegistrationImpl:: fetch all User method executed:");
+		Page<EzUserRegistration> page = registrationRepo.findAll(pageable);
+		if (page.isEmpty()) {
+			throw new DataNotFoundException("Data not found");
+		} else {
+			return page;
+		}
+
+	}
+	@Override
+	public EzUserRegistration fetchUserById(Integer id) {
+		
+		Optional<EzUserRegistration> opt = registrationRepo.findById(id);
+		if(opt.isEmpty())
+		{
+			throw new IllegalArgumentException("Data not found");
+		}
+		else
+		{
+			return opt.get();
+		}
 	}
 
 }

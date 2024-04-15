@@ -1,8 +1,14 @@
 package ai.acintyo.ezykle.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,12 +21,23 @@ import ai.acintyo.ezykle.entities.EzAdminServices;
 import ai.acintyo.ezykle.model.ApiResponse;
 import ai.acintyo.ezykle.services.AdminService;
 import jakarta.validation.Valid;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/ezykle-admin")
 @Slf4j
+@Setter
+@Getter
+@ConfigurationProperties(prefix="admin.service")
 public class AdminServiceCenterController {
+
+	//@Value("${admin.service.centerRegisteredSuccessfully}")
+	private String centerRegisteredSuccessfully;
+	private String failedToRegisterServiceCenter;
+	private String addedSuccessfully;
+	private String failedToAddService;
 
 	@Autowired
 	AdminService adminService;
@@ -28,6 +45,7 @@ public class AdminServiceCenterController {
 	@PostMapping("/add-service-center")
 	public ResponseEntity<ApiResponse<EzAdminServiceCenter>> saveRegistraion(
 			@RequestBody @Valid AdminServiceRegForm regForm) {
+		System.out.println(centerRegisteredSuccessfully);
 		log.debug(
 				"ai.acintyo.ezykle.controller.AdminServiceCenterController::Attempting to register new service center");
 
@@ -36,17 +54,32 @@ public class AdminServiceCenterController {
 			log.info(
 					"ai.acintyo.ezykle.controller.AdminServiceCenterController::Service center registered successfully");
 
-			return ResponseEntity.ok(new ApiResponse<>(true, "{admin.service.centerRegisteredSuccessfully}", result));
+			return ResponseEntity.ok(new ApiResponse<>(true, centerRegisteredSuccessfully, result));
 		} catch (Exception e) {
 			log.error(
 					"ai.acintyo.ezykle.controller.AdminServiceCenterController::Failed to register service center: {}",
 					e.getMessage(), e);
 
 			return new ResponseEntity<>(
-					new ApiResponse<>(false, "{admin.service.failedToRegisterServiceCenter}" + e.getMessage(), null),
+					new ApiResponse<>(false, failedToRegisterServiceCenter + "" + e.getMessage(), null),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
+	}
+
+	@GetMapping("/get-all-service-centers")
+	public ResponseEntity<ApiResponse<Page<EzAdminServiceCenter>>> getAllServiceCenters(
+			@PageableDefault Pageable pageable) {
+		log.info("ai.acintyo.ezykle.controller.AdminServiceCenterController::attempting find all service centers ");
+
+		return ResponseEntity
+				.ok(new ApiResponse<>(true, "data find successfully", adminService.fetchAllServiceCenters(pageable)));
+	}
+
+	@GetMapping("/get-service-center/{id}")
+	public ResponseEntity<ApiResponse<EzAdminServiceCenter>> getServiceCenter(@PathVariable Integer id) {
+		return ResponseEntity
+				.ok(new ApiResponse<>(true, "data find successfully", adminService.fetchServiceCenterById(id)));
 	}
 
 	@PostMapping("/add-service")
@@ -57,15 +90,25 @@ public class AdminServiceCenterController {
 			EzAdminServices result = adminService.addService(servicesForm);
 			log.info("ai.acintyo.ezykle.controller.AdminServiceCenterController::Service added successfully");
 
-			return ResponseEntity.ok(new ApiResponse<>(true, "{admin.services.addedSuccessfully}", result));
+			return ResponseEntity.ok(new ApiResponse<>(true, addedSuccessfully, result));
 		} catch (Exception e) {
 			log.error("ai.acintyo.ezykle.controller.AdminServiceCenterController::Failed to add service: {}",
 					e.getMessage(), e);
 
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new ApiResponse<>(false, "{admin.services.failedToAddService}" + e.getMessage(), null));
+					.body(new ApiResponse<>(false, failedToAddService + "" + e.getMessage(), null));
 		}
 
+	}
+	@GetMapping("/get-all-services")
+	public ResponseEntity<ApiResponse<Page<EzAdminServices>>> getAllServices(@PageableDefault Pageable pageable)
+	{
+		return ResponseEntity.ok(new ApiResponse<>(true,"data find successfully",adminService.fetchAllServices(pageable)));
+	}
+	@GetMapping("/get-service/{id}")
+	public ResponseEntity<ApiResponse<EzAdminServices>> getService(@PathVariable Integer id)
+	{
+		return ResponseEntity.ok(new ApiResponse<>(true,"data find successfully",adminService.fetchServiceById(id)));
 	}
 
 }

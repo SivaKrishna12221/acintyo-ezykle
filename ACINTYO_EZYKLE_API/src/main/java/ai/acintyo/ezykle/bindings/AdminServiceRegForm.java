@@ -2,7 +2,6 @@ package ai.acintyo.ezykle.bindings;
 
 import java.time.LocalTime;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.validation.constraints.Email;
@@ -11,7 +10,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-@ConfigurationProperties(prefix = "admin.service")
 public class AdminServiceRegForm {
 
 	@NotBlank(message = "{admin.service.centerNameRequired}")

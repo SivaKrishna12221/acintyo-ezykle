@@ -1,10 +1,15 @@
 package ai.acintyo.ezykle.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import ai.acintyo.ezykle.bindings.UserAppointmentForm;
 import ai.acintyo.ezykle.entities.EzServiceAppointment;
+import ai.acintyo.ezykle.model.DataNotFoundException;
 import ai.acintyo.ezykle.repositories.ServiceAppointmentRepo;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,6 +43,29 @@ public class UserAppointmentImpl implements UserAppointmentService {
 			throw new RuntimeException("{user.appointment.saveError}", e);
 		}
 
+	}@Override
+	public Page<EzServiceAppointment> fetchAllAppointments(Pageable pageable) {
+		Page<EzServiceAppointment> page = appointmentRepo.findAll(pageable);
+		if(page.isEmpty())
+		{
+			throw new DataNotFoundException("Appointments not found");
+		}
+		else
+		{
+			return page;
+		}
+	}
+	@Override
+	public EzServiceAppointment fetchAppointementById(Integer id) {
+	Optional<EzServiceAppointment> opt = appointmentRepo.findById(id);
+	if(opt.isEmpty())
+	{
+		throw new IllegalArgumentException("Appointment not found");
+	}
+	else
+	{
+		return opt.get();
+	}
 	}
 
 }
