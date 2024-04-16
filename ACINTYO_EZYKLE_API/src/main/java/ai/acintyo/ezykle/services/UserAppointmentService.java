@@ -1,6 +1,7 @@
 package ai.acintyo.ezykle.services;
 
-import org.springframework.data.domain.Page;
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 
 import ai.acintyo.ezykle.bindings.UserAppointmentForm;
@@ -10,7 +11,12 @@ public interface UserAppointmentService {
 	
 	EzServiceAppointment bookAppointment(UserAppointmentForm appointmentForm);
 
-	Page<EzServiceAppointment> fetchAllAppointments(Pageable pageable);
+	List<EzServiceAppointment> fetchAllAppointments(Pageable pageable);
 	
 	EzServiceAppointment fetchAppointementById(Integer id);
+	
+	EzServiceAppointment updateServiceAppointmentById(Integer id,UserAppointmentForm appointmentForm);
+    
+	String deleteAppointmentById(Integer id);
+
 }

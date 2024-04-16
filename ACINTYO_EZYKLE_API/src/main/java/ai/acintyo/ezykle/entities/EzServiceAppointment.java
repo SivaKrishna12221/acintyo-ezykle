@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Entity;
@@ -20,6 +21,8 @@ import lombok.Setter;
 @Setter
 @Getter
 @Table(name = "EZ_SERVICE_APPOINTMENT")
+@SQLDelete(sql="update EZ_SERVICE_APPOINTMENT set status='deleted' where id=?")
+
 public class EzServiceAppointment {
 
 	@Id
@@ -49,5 +52,7 @@ public class EzServiceAppointment {
 	private LocalDateTime lastUpdatedOn;
 
 	private String updatedBy;
+	
+	private String status="Active";
 
 }

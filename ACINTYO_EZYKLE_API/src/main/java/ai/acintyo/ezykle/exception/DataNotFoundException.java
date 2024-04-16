@@ -1,4 +1,4 @@
-package ai.acintyo.ezykle.model;
+package ai.acintyo.ezykle.exception;
 
 public class DataNotFoundException extends RuntimeException{
 

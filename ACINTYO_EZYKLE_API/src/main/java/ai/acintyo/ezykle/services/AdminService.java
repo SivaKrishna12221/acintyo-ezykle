@@ -1,6 +1,7 @@
 package ai.acintyo.ezykle.services;
 
-import org.springframework.data.domain.Page;
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 
 import ai.acintyo.ezykle.bindings.AdminServiceRegForm;
@@ -14,13 +15,18 @@ public interface AdminService {
 	
     EzAdminServices addService(AdminServicesForm servicesForm);
 	
-    Page<EzAdminServiceCenter> fetchAllServiceCenters(Pageable pageable);
+   List<EzAdminServiceCenter> fetchAllServiceCenters(Pageable pageable);
     
     EzAdminServiceCenter fetchServiceCenterById(Integer id);
     
-    Page<EzAdminServices> fetchAllServices(Pageable pageable);
+    String deleteServiceCenter(Integer id);
+    List<EzAdminServices> fetchAllServices(Pageable pageable);
     
     EzAdminServices fetchServiceById(Integer id);
     
+    EzAdminServiceCenter updateServiceCenterById(Integer id,AdminServiceRegForm serviceRegForm);
     
+    EzAdminServices updateServiceById(Integer id,AdminServicesForm serviceForm);
+    
+    String deleteServiceById(Integer id);
 }

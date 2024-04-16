@@ -1,6 +1,5 @@
 package ai.acintyo.ezykle.exception;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,9 +9,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 
-import ai.acintyo.ezykle.model.DataNotFoundException;
-import ai.acintyo.ezykle.model.Response;
+import ai.acintyo.ezykle.model.ErrorDetails;
 
 @RestControllerAdvice
 public class ExceptionController {
@@ -28,14 +27,23 @@ public class ExceptionController {
 	}
 	
 	@ExceptionHandler(DataNotFoundException.class)
-	public ResponseEntity<Response> dataNotFoundException(DataNotFoundException dn)
+	public ResponseEntity<ErrorDetails> dataNotFoundException(DataNotFoundException dn,WebRequest request)
 	{
-	  return new ResponseEntity<Response>(new Response(LocalDateTime.now(), false, dn.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
+		
+	return new ResponseEntity<>(new ErrorDetails(HttpStatus.NO_CONTENT.value(), dn.getMessage(), request.getDescription(false)),HttpStatus.NO_CONTENT);
 	}
 	@ExceptionHandler(IllegalArgumentException.class)
-	public ResponseEntity<Response> illegalArugmentException(IllegalArgumentException il)
+	public ResponseEntity<?> handleIllegalArugmentException(IllegalArgumentException il,WebRequest request)
 	{
-		return new ResponseEntity<Response>(new Response(LocalDateTime.now(),false,il.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<ErrorDetails>(new ErrorDetails(HttpStatus.BAD_REQUEST.value(),il.getMessage(),request.getDescription(false)),HttpStatus.BAD_REQUEST);
 	}
+  
+	
+	@ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<?> handleRuntimeException(RuntimeException re,WebRequest request)
+	{
+		return new ResponseEntity<>(new ErrorDetails(HttpStatus.INTERNAL_SERVER_ERROR.value(),re.getMessage() ,request.getDescription(false)),HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
 
 }

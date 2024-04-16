@@ -1,7 +1,8 @@
 package ai.acintyo.ezykle.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -52,7 +53,7 @@ public class UserAppointmentController {
 	}
 
 	@GetMapping("/get-all-appointments")
-	public ResponseEntity<ApiResponse<Page<EzServiceAppointment>>> getAllAppointments(@PageableDefault Pageable pageable)
+	public ResponseEntity<ApiResponse<List<EzServiceAppointment>>> getAllAppointments(@PageableDefault Pageable pageable)
 	{
 		log.info("ai.acintyo.ezykle.controller.UserAppointmentController::Attempting to get all Appointments");
 		return ResponseEntity.ok(new ApiResponse<>(true, "data find successfully", appointmentService.fetchAllAppointments(pageable)));

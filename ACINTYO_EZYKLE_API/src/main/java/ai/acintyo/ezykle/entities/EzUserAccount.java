@@ -45,5 +45,6 @@ public class EzUserAccount {
 	private String updatedBy;
 	
 	
+	
 
 }

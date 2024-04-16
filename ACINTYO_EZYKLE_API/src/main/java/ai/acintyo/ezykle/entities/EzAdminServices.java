@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.ListIndexBase;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.CollectionTable;
@@ -26,6 +27,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Table(name = "EZ_SERVICES")
+@SQLDelete( sql= "update  EZ_SERVICES set serviceStatus='deleted' where id=? ")
 public class EzAdminServices {
 	
 	@Id
@@ -60,4 +62,6 @@ public class EzAdminServices {
 	 @ManyToOne
 	  @JoinColumn(name = "SERVICE_ID", referencedColumnName = "id")
 	  private EzAdminServiceCenter serviceCenter;
+	 
+	 private String serviceStatus="Active";
 }

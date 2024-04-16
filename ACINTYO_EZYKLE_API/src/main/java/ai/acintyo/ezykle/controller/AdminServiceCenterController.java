@@ -1,8 +1,9 @@
 package ai.acintyo.ezykle.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -68,7 +70,7 @@ public class AdminServiceCenterController {
 	}
 
 	@GetMapping("/get-all-service-centers")
-	public ResponseEntity<ApiResponse<Page<EzAdminServiceCenter>>> getAllServiceCenters(
+	public ResponseEntity<ApiResponse<List<EzAdminServiceCenter>>> getAllServiceCenters(
 			@PageableDefault Pageable pageable) {
 		log.info("ai.acintyo.ezykle.controller.AdminServiceCenterController::attempting find all service centers ");
 
@@ -101,7 +103,7 @@ public class AdminServiceCenterController {
 
 	}
 	@GetMapping("/get-all-services")
-	public ResponseEntity<ApiResponse<Page<EzAdminServices>>> getAllServices(@PageableDefault Pageable pageable)
+	public ResponseEntity<ApiResponse<List<EzAdminServices>>> getAllServices(@PageableDefault Pageable pageable)
 	{
 		return ResponseEntity.ok(new ApiResponse<>(true,"data find successfully",adminService.fetchAllServices(pageable)));
 	}
@@ -111,4 +113,15 @@ public class AdminServiceCenterController {
 		return ResponseEntity.ok(new ApiResponse<>(true,"data find successfully",adminService.fetchServiceById(id)));
 	}
 
+	@PutMapping("/update-service-center/{id}")
+	public ResponseEntity<ApiResponse<EzAdminServiceCenter>> updateServiceCenter(@PathVariable Integer id,@RequestBody AdminServiceRegForm regForm)
+	{
+		return ResponseEntity.ok(new ApiResponse<>(true,"Service center Updated successfully",adminService.updateServiceCenterById(id, regForm)));
+	}
+	
+	@PutMapping("/update-service/{id}")
+	public ResponseEntity<?> updateService(@PathVariable Integer id,@RequestBody AdminServicesForm serviceForm)
+	{
+		return ResponseEntity.ok(new ApiResponse<>(true,"Service updated successfully",adminService.updateServiceById(id, serviceForm)));
+	}
 }
